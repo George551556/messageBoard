@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .item {
+            width: 50%;
+            padding: 10px;
+        }
+        @media (max-width: 600px) {
+            .item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <center style="font-size: 30px;">
+        <h2>PDF转换为word</h2>
+        <p style="font-size: 30px;">一次性最多转换50页</p>
+        <input type="file" id="my-file" style="font-size: 30px;"><br>
+        <input type="submit" id="submit" style="font-size: 30px;"><br>
+        <p id="sumalert"></p>
+    </center>
+</body>
+<script>
+    var sumalert = document.getElementById("sumalert");
+    var submit = document.getElementById("submit");
+    submit.addEventListener("click", async ()=>{
+        const fileInput = document.querySelector('#my-file');
+
+    
+    if (fileInput.files.length > 0) {
+        //
+        sumalert.innerText = "提交成功，请稍等..."
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+        //向后端发送请求
+        const response = await fetch('/file', {
+            method: 'POST',
+            body: formData
+        });
+
+        // 检查响应状态
+        if (response.ok) {
+            //正常运行
+            alert("转换成功\n点击确定直接下载")
+            console.log('success');
+            console.log(response.headers.get('Content-Disposition'))
+            //获取文件名
+            const fileName = response.headers.get('Content-Disposition').split('filename=')[1];
+            // fileName = fileName.split("\"")[1];
+            // fileName = fileName.split("\"")[0];
+            console.log(fileName) //.......................
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.click();
+
+
+            URL.revokeObjectURL(url);
+        } else {
+            //失败
+            alert("failure")
+            console.error('error');
+        }
+        } catch (error) {
+        alert(error)
+        console.error('错误', error);
+        }
+        
+        sumalert.innerText = "";//清除前端提示信息
+    } else {
+        //
+        alert("please select a file...")
+        console.error('please select a file...');
+    }
+    });
+
+
+</script>
+</html>

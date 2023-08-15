@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>留言板</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .item {
+            width: 50%;
+            padding: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>MessageBoard</h1>
+    <button id="button">PDF转Word</button>
+    <p>临时昵称：{{virtualpeople}}</p>
+    <form id="message-form">
+        <input type="text" id="message-input" placeholder="输入留言" autofocus>
+        <button type="submit">提交</button>
+    </form>
+
+    <ul id="message-list">
+        {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+
+    </ul>
+
+    <script>
+        const socket = new WebSocket(`ws://${location.host}/ws`);
+        const messageForm = document.getElementById("message-form");
+        const messageInput = document.getElementById("message-input");
+        const messageList = document.getElementById("message-list");
+        var virtualpeople = "{{virtualpeople}}";//获取本页面获得的昵称值
+
+        socket.onmessage = function (event) {
+            const message = event.data;
+            const li = document.createElement("li");
+            li.innerText = message;
+            messageList.appendChild(li);
+
+            // 保持留言数量不超过18条
+            const lis = messageList.querySelectorAll("li");
+            if (lis.length > 18) {
+                lis[0].remove();
+            }
+        };
+
+        messageForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const message = messageInput.value;//获取输入留言的值
+            newMessage = "["+virtualpeople+"]: "+message;
+            socket.send(newMessage);
+            messageInput.value = "";
+        });
+
+        var button = document.getElementById("button");
+        button.addEventListener("click", () =>{
+            window.location.href="/pdf2word";
+        });
+
+
+
+
+    </script>
+</body>
+</html>
