@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <style>
+        body{
+            background-color: antiquewhite;
+        }
         .container {
             display: flex;
             flex-wrap: wrap;
@@ -21,8 +24,7 @@
 </head>
 <body>
     <center style="font-size: 30px;">
-        <h2>PDF转换为word</h2>
-        <p style="font-size: 30px;">一次性最多转换50页</p>
+        <h2>caj转换为PDF</h2>
         <input type="file" id="my-file" style="font-size: 30px;"><br>
         <input type="submit" id="submit" style="font-size: 30px;"><br>
         <p id="sumalert"></p>
@@ -43,7 +45,7 @@
 
         try {
         //向后端发送请求
-        const response = await fetch('/file_pdf2word', {
+        const response = await fetch('/file_caj2pdf', {
             method: 'POST',
             body: formData
         });

@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, Request, Depends, Form, File, UploadFile
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from function import pdf_docx
+from caj2pdf import caj2pdf
 from typing import List
 import os
 
@@ -54,8 +55,13 @@ async def broadcast_message(message: str):
 def def_jump(request: Request):
     return templates.TemplateResponse("index_pdf2word.html", {"request": request})
 
+# 返回caj转换的主界面
+@app.get("/caj2pdf")
+def def_jump(request: Request):
+    return templates.TemplateResponse("index_caj2pdf.html", {"request": request})
+
 # PDF转换的接口
-@app.post('/file')
+@app.post('/file_pdf2word')
 async def convert(file: UploadFile):
     # 
     if file.filename:
@@ -85,7 +91,36 @@ async def convert(file: UploadFile):
     else:
         # return {"message": ""}
         print("failure")
- 
+
+# caj转换接口
+@app.post('/file_caj2pdf')
+async def convert_1(file: UploadFile):
+    if file.filename.endswith(".caj"):
+        file.filename = "好"+file.filename # 这里加“好”是为了加入中文字符故意弄乱编码，从而在前端下载文件时的文件名是undifined.pdf
+        # 
+        save_path = os.path.join("tempfiles",file.filename)
+        # 保存文件到本地
+        with open(save_path, "wb") as f:
+            contents = await file.read()
+            f.write(contents)
+        # 
+        # temp_filename = file.filename.split(".")[0]
+        print('lkz.......')
+        fullFileName = caj2pdf(file.filename)
+        print(fullFileName, "12312312")
+        # 此处file_path是包含相对路径和文件全名在内
+        file_path = fullFileName
+        # 
+        endName = file.filename.split(".")[0] + ".pdf"
+        print("end:", endName)
+        # 
+        return FileResponse(file_path, filename=endName)
+        
+        return {"message": ""}
+        print("success!!!")
+    else:
+        print('false file type')
+
 
 
 

@@ -8,12 +8,10 @@
             display: flex;
             flex-wrap: wrap;
         }
-
         .item {
             width: 50%;
             padding: 10px;
         }
-
         @media (max-width: 600px) {
             .item {
                 width: 100%;
@@ -23,7 +21,9 @@
 </head>
 <body>
     <h1>MessageBoard</h1>
-    <button id="button">PDF转Word</button>
+    <button id="button_pdf2word">PDF转Word</button>
+    <button id="button_caj2word">caj转PDF</button>
+
     <p>临时昵称：{{virtualpeople}}</p>
     <form id="message-form">
         <input type="text" id="message-input" placeholder="输入留言" autofocus>
@@ -65,9 +65,14 @@
             messageInput.value = "";
         });
 
-        var button = document.getElementById("button");
+        var button = document.getElementById("button_pdf2word");
         button.addEventListener("click", () =>{
             window.location.href="/pdf2word";
+        });
+        
+        var button1 = document.getElementById("button_caj2word");
+        button1.addEventListener("click", ()=>{
+            window.location.href = "caj2pdf";
         });
 
 
