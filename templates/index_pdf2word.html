@@ -33,58 +33,59 @@
     var submit = document.getElementById("submit");
     submit.addEventListener("click", async ()=>{
         const fileInput = document.querySelector('#my-file');
-
     
-    if (fileInput.files.length > 0) {
-        //
-        sumalert.innerText = "提交成功，请稍等..."
-        const formData = new FormData();
-        formData.append('file', fileInput.files[0]);
+        if (fileInput.files.length > 0) {
+            //
+            sumalert.innerText = "提交成功，请稍等..."
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
 
-        try {
-        //向后端发送请求
-        const response = await fetch('/file_pdf2word', {
-            method: 'POST',
-            body: formData
-        });
+            try {
+            //向后端发送请求
+            const response = await fetch('/file_pdf2word', {
+                method: 'POST',
+                body: formData
+            });
 
-        // 检查响应状态
-        if (response.ok) {
-            //正常运行
-            alert("转换成功\n点击确定直接下载")
-            console.log('success');
-            console.log(response.headers.get('Content-Disposition'))
-            //获取文件名
-            const fileName = response.headers.get('Content-Disposition').split('filename=')[1];
-            // fileName = fileName.split("\"")[1];
-            // fileName = fileName.split("\"")[0];
-            console.log(fileName) //.......................
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
+            // 检查响应状态
+            if (response.ok) {
+                //正常运行
+                alert("转换成功\n点击确定直接下载")
+                console.log('success');
+                console.log(response.headers.get('Content-Disposition'));
+                //获取文件名
+                // const fileName = response.headers.get('Content-Disposition').split('filename=')[1];
+                const selectedFile = fileInput.files[0];
+                const fileName = selectedFile.name;
+                const newFileName = fileName.split('.')[0];
+                
+                console.log(newFileName); // 这里输出undefined
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
 
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = fileName;
-            link.click();
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = newFileName;// 设置下载后的文件名
+                link.click();
 
 
-            URL.revokeObjectURL(url);
+                URL.revokeObjectURL(url);
+            } else {
+                //失败
+                alert("failure")
+                console.error('error');
+            }
+            } catch (error) {
+            alert(error)
+            console.error('错误', error);
+            }
+            
+            sumalert.innerText = "";//清除前端提示信息
         } else {
-            //失败
-            alert("failure")
-            console.error('error');
+            //
+            alert("please select a file...")
+            console.error('please select a file...');
         }
-        } catch (error) {
-        alert(error)
-        console.error('错误', error);
-        }
-        
-        sumalert.innerText = "";//清除前端提示信息
-    } else {
-        //
-        alert("please select a file...")
-        console.error('please select a file...');
-    }
     });
 
 

@@ -65,7 +65,7 @@ def def_jump(request: Request):
 async def convert(file: UploadFile):
     # 
     if file.filename:
-        file.filename = "好"+file.filename # 这里加“好”是为了加入中文字符故意弄乱编码，从而在前端下载文件时的文件名是undefined.docx
+        # file.filename = "好"+file.filename # 这里加“好”是为了加入中文字符故意弄乱编码，从而在前端下载文件时的文件名是undefined.docx
         if file.filename.endswith(".pdf"):
             # 
             save_path = os.path.join("tempfiles",file.filename)
@@ -80,8 +80,8 @@ async def convert(file: UploadFile):
             file_path = fullFileName
             # file.docx
             endName = file.filename.split(".")[0] + ".docx"
-            print("end:", endName)
             # 
+            # print(file_path, '||||', endName)
             return FileResponse(file_path, filename=endName)
             
             # return {"message": ""}
@@ -96,7 +96,7 @@ async def convert(file: UploadFile):
 @app.post('/file_caj2pdf')
 async def convert_1(file: UploadFile):
     if file.filename.endswith(".caj"):
-        file.filename = "好"+file.filename # 这里加“好”是为了加入中文字符故意弄乱编码，从而在前端下载文件时的文件名是undifined.pdf
+        # file.filename = "好"+file.filename # 这里加“好”是为了加入中文字符故意弄乱编码，从而在前端下载文件时的文件名是undifined.pdf
         # 
         save_path = os.path.join("tempfiles",file.filename)
         # 保存文件到本地
@@ -105,9 +105,9 @@ async def convert_1(file: UploadFile):
             f.write(contents)
         # 
         # temp_filename = file.filename.split(".")[0]
-        print('lkz.......')
+        # print('lkz.......')
         fullFileName = caj2pdf(file.filename)
-        print(fullFileName, "12312312")
+        # print(fullFileName, "12312312")
         # 此处file_path是包含相对路径和文件全名在内
         file_path = fullFileName
         # 
@@ -119,7 +119,7 @@ async def convert_1(file: UploadFile):
         return {"message": ""}
         print("success!!!")
     else:
-        print('false file type')
+        print(file.filename, 'with wrong file type...')
 
 
 

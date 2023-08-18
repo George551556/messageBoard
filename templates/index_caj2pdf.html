@@ -57,34 +57,36 @@
             console.log('success');
             console.log(response.headers.get('Content-Disposition'))
             //获取文件名
-            const fileName = response.headers.get('Content-Disposition').split('filename=')[1];
-            // fileName = fileName.split("\"")[1];
-            // fileName = fileName.split("\"")[0];
-            console.log(fileName) //.......................
+            // const fileName = response.headers.get('Content-Disposition').split('filename=')[1];
+            const selectedFile = fileInput.files[0];
+            const fileName = selectedFile.name;
+            const newFileName = fileName.split('.')[0];
+            console.log(newFileName) //.......................
+
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
 
             const link = document.createElement('a');
             link.href = url;
-            link.download = fileName;
+            link.download = newFileName;
             link.click();
 
 
             URL.revokeObjectURL(url);
         } else {
             //失败
-            alert("failure")
+            alert("submit failure")
             console.error('error');
         }
         } catch (error) {
-        alert(error)
+        alert(error);
         console.error('错误', error);
         }
         
         sumalert.innerText = "";//清除前端提示信息
     } else {
         //
-        alert("please select a file...")
+        alert("please select a file...");
         console.error('please select a file...');
     }
     });
